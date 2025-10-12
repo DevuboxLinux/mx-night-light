@@ -5,6 +5,7 @@ Maintainer: TheBSODFan <bsodandwsod501@gmail.com>
 Build-Depends: debhelper-compat (= 13), dh-python, python3-all, python3-setuptools
 Standards-Version: 4.6.1
 Homepage: https://github.com/DevuboxLinux/mx-night-light
+
 Package: mx-night-light
 Architecture: all
 Depends: ${misc:Depends},

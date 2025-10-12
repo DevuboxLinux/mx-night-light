@@ -20,7 +20,7 @@ sudo apt install gir1.2-ayatanaappindicator3-0.1 gir1.2-glib-2.0 gir1.2-gtk-3.0 
 
 Clone the repository
 ```bash
-git clone https://github.com/mx/mx-night-light.git ~/mx-night-light
+git clone https://github.com/DevuboxLinux/mx-night-light.git ~/mx-night-light
 ```
 
 Run application
