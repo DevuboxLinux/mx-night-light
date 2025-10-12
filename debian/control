@@ -1,12 +1,11 @@
-Source: pardus-night-light
+Source: mx-night-light
 Section: x11
 Priority: optional
-Maintainer: Fatih Altun <fatih.altun@pardus.org.tr>
+Maintainer: TheBSODFan <bsodandwsod501@gmail.com>
 Build-Depends: debhelper-compat (= 13), dh-python, python3-all, python3-setuptools
 Standards-Version: 4.6.1
-Homepage: https://github.com/pardus/pardus-night-light
-
-Package: pardus-night-light
+Homepage: https://github.com/DevuboxLinux/mx-night-light
+Package: mx-night-light
 Architecture: all
 Depends: ${misc:Depends},
          ${python3:Depends},
@@ -15,7 +14,10 @@ Depends: ${misc:Depends},
          gir1.2-gtk-3.0,
          python3-distro,
          redshift
-Description: Pardus Night Light.
+Replaces: pardus-night-light
+Breaks: pardus-night-light
+Provides: pardus-night-light
+Description: MX Night Light.
  Simple color temperature application based on Redshift.
  Redshift adjusts the color temperature of your screen
  according to your surroundings. This may help your eyes

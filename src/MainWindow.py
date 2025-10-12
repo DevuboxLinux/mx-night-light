@@ -30,8 +30,8 @@ from UserSettings import UserSettings
 import locale
 from locale import gettext as _
 
-locale.bindtextdomain('pardus-night-light', '/usr/share/locale')
-locale.textdomain('pardus-night-light')
+locale.bindtextdomain('mx-night-light', '/usr/share/locale')
+locale.textdomain('mx-night-light')
 
 
 class MainWindow(object):
@@ -55,12 +55,12 @@ class MainWindow(object):
         self.init_indicator()
         self.init_ui()
 
-        self.about_dialog.set_program_name(_("Pardus Night Light"))
+        self.about_dialog.set_program_name(_("MX Night Light"))
         if self.about_dialog.get_titlebar() is None:
             about_headerbar = Gtk.HeaderBar.new()
             about_headerbar.set_show_close_button(True)
-            about_headerbar.set_title(_("About Pardus Night Light"))
-            about_headerbar.pack_start(Gtk.Image.new_from_icon_name("pardus-night-light", Gtk.IconSize.LARGE_TOOLBAR))
+            about_headerbar.set_title(_("About MX Night Light"))
+            about_headerbar.pack_start(Gtk.Image.new_from_icon_name("mx-night-light", Gtk.IconSize.LARGE_TOOLBAR))
             about_headerbar.show_all()
             self.about_dialog.set_titlebar(about_headerbar)
 
@@ -117,8 +117,8 @@ class MainWindow(object):
 
     def define_variables(self):
         system_wide = "usr/share" in os.path.dirname(os.path.abspath(__file__))
-        self.icon_active = "pardus-night-light-on-symbolic" if system_wide else "night-light-symbolic"
-        self.icon_passive = "pardus-night-light-off-symbolic" if system_wide else "display-brightness-symbolic"
+        self.icon_active = "mx-night-light-on-symbolic" if system_wide else "night-light-symbolic"
+        self.icon_passive = "mx-night-light-off-symbolic" if system_wide else "display-brightness-symbolic"
         self.make_first_sleep = True
         self.etap = False
         self.temp_color = {"low": 5500, "medium": 4000, "high": 2500}
@@ -195,7 +195,7 @@ class MainWindow(object):
         system_wide = "usr/share" in os.path.dirname(os.path.abspath(__file__))
         if not system_wide:
             self.main_window.set_default_icon_from_file(
-                os.path.dirname(os.path.abspath(__file__)) + "/../data/pardus-night-light.svg")
+                os.path.dirname(os.path.abspath(__file__)) + "/../data/mx-night-light.svg")
             self.about_dialog.set_logo(None)
 
     def init_etap_tempcolor_buttons(self):
@@ -258,9 +258,9 @@ class MainWindow(object):
 
     def init_indicator(self):
         self.indicator = appindicator.Indicator.new(
-            "pardus-night-light", self.icon_active, appindicator.IndicatorCategory.APPLICATION_STATUS)
+            "mx-night-light", self.icon_active, appindicator.IndicatorCategory.APPLICATION_STATUS)
         self.indicator.set_status(appindicator.IndicatorStatus.ACTIVE)
-        self.indicator.set_title(_("Pardus Night Light"))
+        self.indicator.set_title(_("MX Night Light"))
         self.menu = Gtk.Menu()
         self.item_action = Gtk.MenuItem()
         self.item_action.connect("activate", self.on_menu_action)

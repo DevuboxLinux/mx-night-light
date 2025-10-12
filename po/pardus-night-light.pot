@@ -30,7 +30,7 @@ msgid "Launch at startup"
 msgstr ""
 
 #: ui/MainWindow.glade:238 src/MainWindow.py:58 src/MainWindow.py:265
-msgid "Pardus Night Light"
+msgid "MX Night Light"
 msgstr ""
 
 #: ui/MainWindow.glade:267
@@ -43,7 +43,7 @@ msgid "translator-credits"
 msgstr ""
 
 #: src/MainWindow.py:62
-msgid "About Pardus Night Light"
+msgid "About MX Night Light"
 msgstr ""
 
 #: src/MainWindow.py:216

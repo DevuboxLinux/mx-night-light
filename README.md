@@ -1,10 +1,8 @@
-# Pardus Night Light
+# MX Night Light
 
-Pardus Night Light is a night light application based on redshift.
+MX Night Light is a night light application based on redshift. (fork of pardus-night-light)
 
 Redshift adjusts the color temperature of your screen according to your surroundings.This may help your eyes hurt less if you are working in front of the screen at night.
-
-[![Packaging status](https://repology.org/badge/vertical-allrepos/pardus-night-light.svg)](https://repology.org/project/pardus-night-light/versions)
 
 ### **Dependencies**
 
@@ -22,12 +20,12 @@ sudo apt install gir1.2-ayatanaappindicator3-0.1 gir1.2-glib-2.0 gir1.2-gtk-3.0 
 
 Clone the repository
 ```bash
-git clone https://github.com/pardus/pardus-night-light.git ~/pardus-night-light
+git clone https://github.com/mx/mx-night-light.git ~/mx-night-light
 ```
 
 Run application
 ```bash
-python3 ~/pardus-night-light/src/Main.py
+python3 ~/mx-night-light/src/Main.py
 ```
 
 ### **Build deb package**
@@ -35,9 +33,9 @@ python3 ~/pardus-night-light/src/Main.py
 ```bash
 sudo apt install devscripts git-buildpackage
 sudo mk-build-deps -ir
-gbp buildpackage --git-export-dir=/tmp/build/pardus-night-light -us -uc
+gbp buildpackage --git-export-dir=/tmp/build/mx-night-light -us -uc
 ```
 
 ### **Screenshots**
 
-![pardus-night-light 1](screenshots/pardus-night-light-1.png)
+![mx-night-light 1](screenshots/mx-night-light-1.png)

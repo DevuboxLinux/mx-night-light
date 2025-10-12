@@ -22,11 +22,11 @@ class UserSettings(object):
         self.default_temp = 5500
         self.default_autostart = False
 
-        self.configdir = "{}/pardus/pardus-night-light/".format(GLib.get_user_config_dir())
+        self.configdir = "{}/mx-night-light/mx-night-light/".format(GLib.get_user_config_dir())
         self.configfile = "settings.ini"
 
         self.autostartdir = "{}/autostart/".format(GLib.get_user_config_dir())
-        self.autostartfile = "tr.org.pardus.night-light-autostart.desktop"
+        self.autostartfile = "mx.night-light-autostart.desktop"
 
         self.config = ConfigParser(strict=False)
 
@@ -85,7 +85,7 @@ class UserSettings(object):
         if state:
             if not p.exists():
                 p.symlink_to(
-                    os.path.dirname(os.path.abspath(__file__)) + "/../data/tr.org.pardus.night-light-autostart.desktop")
+                    os.path.dirname(os.path.abspath(__file__)) + "/../data/mx.night-light-autostart.desktop")
         else:
             if p.exists():
                 p.unlink(missing_ok=True)

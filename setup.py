@@ -13,11 +13,11 @@ def create_mo_files():
     for po in os.listdir(podir):
         if po.endswith(".po"):
             os.makedirs("{}/{}/LC_MESSAGES".format(podir, po.split(".po")[0]), exist_ok=True)
-            mo_file = "{}/{}/LC_MESSAGES/{}".format(podir, po.split(".po")[0], "pardus-night-light.mo")
+            mo_file = "{}/{}/LC_MESSAGES/{}".format(podir, po.split(".po")[0], "mx-night-light.mo")
             msgfmt_cmd = 'msgfmt {} -o {}'.format(podir + "/" + po, mo_file)
             subprocess.call(msgfmt_cmd, shell=True)
             mo.append(("/usr/share/locale/" + po.split(".po")[0] + "/LC_MESSAGES",
-                       ["po/" + po.split(".po")[0] + "/LC_MESSAGES/pardus-night-light.mo"]))
+                       ["po/" + po.split(".po")[0] + "/LC_MESSAGES/mx-night-light.mo"]))
     return mo
 
 
@@ -34,39 +34,39 @@ if os.path.exists(changelog):
     f.close()
 
 data_files = [
-    ("/usr/bin", ["pardus-night-light"]),
+    ("/usr/bin", ["mx-night-light"]),
     ("/usr/share/applications",
-     ["data/tr.org.pardus.night-light.desktop"]),
-    ("/usr/share/pardus/pardus-night-light/ui",
+     ["data/mx.night-light.desktop"]),
+    ("/usr/share/mx-night-light/mx-night-light/ui",
      ["ui/MainWindow.glade"]),
-    ("/usr/share/pardus/pardus-night-light/src",
+    ("/usr/share/mx-night-light/mx-night-light/src",
      ["src/Main.py",
       "src/MainWindow.py",
       "src/UserSettings.py",
       "src/__version__"]),
-    ("/usr/share/pardus/pardus-night-light/data",
+    ("/usr/share/mx-night-light/mx-night-light/data",
      ["data/style.css",
-      "data/tr.org.pardus.night-light-autostart.desktop",
-      "data/pardus-night-light.svg",
-      "data/pardus-night-light-on-symbolic.svg",
-      "data/pardus-night-light-off-symbolic.svg"]),
+      "data/mx.night-light-autostart.desktop",
+      "data/mx-night-light.svg",
+      "data/mx-night-light-on-symbolic.svg",
+      "data/mx-night-light-off-symbolic.svg"]),
     ("/usr/share/icons/hicolor/scalable/apps/",
-     ["data/pardus-night-light.svg",
-      "data/pardus-night-light-on-symbolic.svg",
-      "data/pardus-night-light-off-symbolic.svg"])
+     ["data/mx-night-light.svg",
+      "data/mx-night-light-on-symbolic.svg",
+      "data/mx-night-light-off-symbolic.svg"])
 ] + create_mo_files()
 
 setup(
-    name="pardus-night-light",
+    name="mx-night-light",
     version=version,
     packages=find_packages(),
-    scripts=["pardus-night-light"],
+    scripts=["mx-night-light"],
     install_requires=["PyGObject"],
     data_files=data_files,
     author="Fatih Altun",
     author_email="fatih.altun@pardus.org.tr",
     description="Redshift based night light application",
     license="GPLv3",
-    keywords="pardus-night-light, redshift, color, temperature",
-    url="https://github.com/pardus/pardus-night-light",
+    keywords="mx-night-light, redshift, color, temperature",
+    url="https://github.com/DevuboxLinux/mx-night-light",
 )
