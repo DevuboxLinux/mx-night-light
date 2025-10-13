@@ -60,7 +60,7 @@ class MainWindow(object):
             about_headerbar = Gtk.HeaderBar.new()
             about_headerbar.set_show_close_button(True)
             about_headerbar.set_title(_("About MX Night Light"))
-            about_headerbar.pack_start(Gtk.Image.new_from_icon_name("mx-night-light", Gtk.IconSize.LARGE_TOOLBAR))
+            about_headerbar.pack_start(Gtk.Image.new_from_icon_name("redshift", Gtk.IconSize.LARGE_TOOLBAR))
             about_headerbar.show_all()
             self.about_dialog.set_titlebar(about_headerbar)
 
@@ -117,8 +117,8 @@ class MainWindow(object):
 
     def define_variables(self):
         system_wide = "usr/share" in os.path.dirname(os.path.abspath(__file__))
-        self.icon_active = "mx-night-light-on-symbolic" if system_wide else "night-light-symbolic"
-        self.icon_passive = "mx-night-light-off-symbolic" if system_wide else "display-brightness-symbolic"
+        self.icon_active = "redshift-status-on" if system_wide else "night-light-symbolic"
+        self.icon_passive = "redshift-status-off" if system_wide else "display-brightness-symbolic"
         self.make_first_sleep = True
         self.etap = False
         self.temp_color = {"low": 5500, "medium": 4000, "high": 2500}
@@ -195,7 +195,7 @@ class MainWindow(object):
         system_wide = "usr/share" in os.path.dirname(os.path.abspath(__file__))
         if not system_wide:
             self.main_window.set_default_icon_from_file(
-                os.path.dirname(os.path.abspath(__file__)) + "/../data/mx-night-light.svg")
+                os.path.dirname(os.path.abspath(__file__)) + "/../data/redshift.svg")
             self.about_dialog.set_logo(None)
 
     def init_etap_tempcolor_buttons(self):
@@ -258,7 +258,7 @@ class MainWindow(object):
 
     def init_indicator(self):
         self.indicator = appindicator.Indicator.new(
-            "mx-night-light", self.icon_active, appindicator.IndicatorCategory.APPLICATION_STATUS)
+            "redshift", self.icon_active, appindicator.IndicatorCategory.APPLICATION_STATUS)
         self.indicator.set_status(appindicator.IndicatorStatus.ACTIVE)
         self.indicator.set_title(_("MX Night Light"))
         self.menu = Gtk.Menu()

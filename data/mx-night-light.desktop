@@ -2,7 +2,7 @@
 Name=MX Night Light
 Comment=Simple color temperature application based on Redshift
 Exec=mx-night-light
-Icon=mx-night-light
+Icon=redshift
 Terminal=false
 Type=Application
 Categories=GTK;Utility;MX-Utilities;

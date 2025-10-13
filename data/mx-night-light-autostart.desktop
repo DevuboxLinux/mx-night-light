@@ -1,9 +1,8 @@
 [Desktop Entry]
 Name=MX Night Light
 Comment=Simple color temperature application based on Redshift
-Comment[tr]=Redshift tabanlı basit renk sıcaklığı uygulaması
 Exec=mx-night-light --tray
-Icon=mx-night-light
+Icon=redshift
 Terminal=false
 Type=Application
 Categories=GTK;Utility;

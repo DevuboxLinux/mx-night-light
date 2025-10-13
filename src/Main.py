@@ -17,10 +17,10 @@ from gi.repository import Gtk, Gio, GLib
 
 class Application(Gtk.Application):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, application_id="mx.night-light",
+        super().__init__(*args, application_id="mx-night-light",
                          flags=Gio.ApplicationFlags(8), **kwargs)
         self.window = None
-        GLib.set_prgname("mx.night-light")
+        GLib.set_prgname("mx-night-light")
 
         self.add_main_option(
             "tray",

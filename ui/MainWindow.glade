@@ -19,7 +19,7 @@
     <property name="resizable">False</property>
     <property name="window-position">center</property>
     <property name="default-width">500</property>
-    <property name="icon-name">mx-night-light</property>
+    <property name="icon-name">redshift</property>
     <signal name="delete-event" handler="on_ui_main_window_delete_event" swapped="no"/>
     <signal name="destroy" handler="on_ui_main_window_destroy" swapped="no"/>
     <child>
@@ -258,7 +258,7 @@
   </object>
   <object class="GtkAboutDialog" id="ui_about_dialog">
     <property name="can-focus">False</property>
-    <property name="icon-name">mx-night-light</property>
+    <property name="icon-name">redshift</property>
     <property name="type-hint">dialog</property>
     <property name="transient-for">ui_main_window</property>
     <property name="program-name">MX Night Light</property>
@@ -268,7 +268,7 @@
     <property name="website">https://github.com/DevuboxLinux/mx-night-light</property>
     <property name="authors">TheBSODFan &lt;bsodandwsod501@gmail.com&gt;</property>
     <property name="translator-credits" translatable="yes" comments="Name Surname &lt;example@examplemail.com&gt;">translator-credits</property>
-    <property name="logo-icon-name">mx-night-light</property>
+    <property name="logo-icon-name">redshift</property>
     <property name="license-type">gpl-3-0</property>
     <child internal-child="vbox">
       <object class="GtkBox">

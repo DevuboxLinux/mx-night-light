@@ -16,7 +16,7 @@ Depends: ${misc:Depends},
          python3-distro,
          redshift
 Replaces: pardus-night-light
-Breaks: pardus-night-light
+Breaks: pardus-night-light, redshift-gtk, redshift-qt
 Provides: pardus-night-light
 Description: MX Night Light.
  Simple color temperature application based on Redshift.
