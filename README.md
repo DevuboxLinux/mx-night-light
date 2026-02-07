@@ -28,6 +28,31 @@ Run application
 python3 ~/mx-night-light/src/Main.py
 ```
 
+
+### **Native GCC build (lighter runtime)**
+
+A native helper binary is included in `native/mx-night-light-native.c` so the core night-light actions can run without starting Python.
+
+Build with GCC:
+```bash
+cd native
+make
+```
+
+Install locally:
+```bash
+sudo make install
+```
+
+Examples:
+```bash
+mx-night-light-native --set 1 --temp 4000
+mx-night-light-native --color 3200
+mx-night-light-native --set 0
+mx-night-light-native --autostart 1
+mx-night-light-native --print-config
+```
+
 ### **Build deb package**
 
 ```bash
