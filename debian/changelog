@@ -1,3 +1,15 @@
+mx-night-light (0.6.0+mx25) unstable; urgency=medium
+
+  [ Emel Öztürk ]
+  * Add ui for schedule part
+  * Add schedule config fields to user settings
+  * Add schedule for automatic night light toggling
+
+  [ TheBSODFan ]
+  * New Version and rebuild for MX25
+  
+ -- TheBSODFan <bsodandwsod501@gmail.com>  Sat, 19 Sep 2026 00:00:00 +0300
+
 mx-night-light (0.5.0+mx25) unstable; urgency=medium
 
   * New Version
