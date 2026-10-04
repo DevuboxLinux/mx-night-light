@@ -1,8 +1,12 @@
 # MX Night Light
 
-MX Night Light is a night light application based on redshift. (fork of pardus-night-light)
+MX Night Light adjusts the color temperature of your screen to reduce eye strain at night. (fork of pardus-night-light)
 
-Redshift adjusts the color temperature of your screen according to your surroundings.This may help your eyes hurt less if you are working in front of the screen at night.
+The app automatically selects the appropriate backend for your desktop environment:
+- **GNOME / Unity / Budgie** — GSettings (`org.gnome.settings-daemon.plugins.color`)
+- **KDE / Plasma** — D-Bus (`org.kde.kwin.ColorCorrect`)
+- **Wayland** (when neither of the above matched) — gammastep
+- **Fallback** — redshift
 
 ### **Dependencies**
 

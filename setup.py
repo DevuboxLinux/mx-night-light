@@ -43,6 +43,7 @@ data_files = [
      ["src/Main.py",
       "src/MainWindow.py",
       "src/UserSettings.py",
+      "src/ColorBackend.py",
       "src/__version__"]),
     ("/usr/share/mx-night-light/data",
      ["data/style.css",

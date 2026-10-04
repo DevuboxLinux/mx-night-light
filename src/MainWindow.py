@@ -8,7 +8,6 @@ Created on Sat Feb  5 19:05:13 2022
 
 import os
 import signal
-import subprocess
 import time
 from datetime import datetime, timedelta
 import distro
@@ -27,6 +26,7 @@ except:
     from gi.repository import AyatanaAppIndicator3 as appindicator
 
 from UserSettings import UserSettings
+from ColorBackend import ColorBackend
 
 import locale
 from locale import gettext as _
@@ -84,7 +84,8 @@ class MainWindow(object):
 
         def sighandler(signum, frame):
             self.cancel_schedule_timer()
-            subprocess.run(["redshift", "-x"])
+            self.backend.sync_disconnect()
+            self.backend.reset()
             if self.about_dialog.is_visible():
                 self.about_dialog.hide()
             self.main_window.get_application().quit()
@@ -130,10 +131,12 @@ class MainWindow(object):
         self.icon_active = "redshift-status-on" if system_wide else "night-light-symbolic"
         self.icon_passive = "redshift-status-off" if system_wide else "display-brightness-symbolic"
         self.make_first_sleep = True
-        self.etap = False
         self.temp_color = {"low": 5500, "medium": 4000, "high": 2500}
+
         self.schedule_timer_id = None
-        self.schedule_init = False
+        self.schedule_init = True
+
+        self.backend = ColorBackend()
 
     def control_args(self):
         if "set" in self.Application.args.keys():
@@ -164,7 +167,7 @@ class MainWindow(object):
                 print("{}".format(e))
                 print("invalid arg")
                 return
-            if self.etap:
+            if not self.UserSettings.config_scrollbar:
                 self.set_color_temp(value)
             else:
                 self.temp_adjusment.set_value(value)
@@ -180,29 +183,25 @@ class MainWindow(object):
 
     def init_ui(self):
 
-        if "etap" in distro.name().lower() and "etap" in distro.codename():
-            print("ETAP detected.")
-            self.etap = True
-
-        if self.etap:
+        if not self.UserSettings.config_scrollbar:
             self.ui_tempcolor_stack.set_visible_child_name("button")
             self.ui_main_box.set_spacing(0)
             self.ui_mainlabels_box.set_spacing(0)
             self.ui_mainwidgets_box.set_spacing(0)
             self.ui_submain_box.set_margin_top(0)
-            self.init_etap_tempcolor_buttons()
+            self.init_nonscrollbar_tempcolor_buttons()
         else:
             self.ui_tempcolor_stack.set_visible_child_name("scale")
 
         self.night_switch.set_state(self.UserSettings.config_status)
-        if self.etap:
+        if not self.UserSettings.config_scrollbar:
             self.ui_temp_box.set_sensitive(self.UserSettings.config_status)
         else:
             self.temp_scale.set_sensitive(self.UserSettings.config_status)
             self.temp_adjusment.set_value(self.UserSettings.config_temp)
         self.autostart_switch.set_state(self.UserSettings.config_autostart)
         if not self.UserSettings.config_status:
-            subprocess.run(["redshift", "-x"])
+            self.backend.reset()
 
         system_wide = "usr/share" in os.path.dirname(os.path.abspath(__file__))
         if not system_wide:
@@ -212,7 +211,10 @@ class MainWindow(object):
 
         self.init_schedule_ui()
 
-    def init_etap_tempcolor_buttons(self):
+        # Gsettings bidirectional sync (no-op if not GNOME/Cinnamon)
+        self.backend.sync_init(self)
+
+    def init_nonscrollbar_tempcolor_buttons(self):
         self.low_button = Gtk.Button.new()
         self.low_button.name = "low"
         self.low_button.connect("clicked", self.on_temp_button_clicked)
@@ -271,6 +273,8 @@ class MainWindow(object):
         self.ui_temp_box.show_all()
 
     def init_indicator(self):
+        if not self.UserSettings.config_trayicon:
+            return
         self.indicator = appindicator.Indicator.new(
             "redshift", self.icon_active, appindicator.IndicatorCategory.APPLICATION_STATUS)
         self.indicator.set_status(appindicator.IndicatorStatus.ACTIVE)
@@ -292,6 +296,8 @@ class MainWindow(object):
         self.indicator.set_menu(self.menu)
 
     def set_indicator(self):
+        if not self.UserSettings.config_trayicon:
+            return
 
         if self.UserSettings.config_status:
             self.item_action.set_label(_("Disable"))
@@ -331,9 +337,20 @@ class MainWindow(object):
         self.save_schedule_config(schedule=state)
 
         if state:
+            # GNOME/Cinnamon only schedule while night light is enabled.
+            if self.backend.has_native_schedule() and not self.UserSettings.config_status:
+                self.night_switch.set_state(True)
+
+            self.backend.sync_schedule(
+                int(self.start_hour_adj.get_value()),
+                int(self.start_minute_adj.get_value()),
+                int(self.end_hour_adj.get_value()),
+                int(self.end_minute_adj.get_value()))
             self.start_schedule()
         else:
             self.cancel_schedule_timer()
+            if self.UserSettings.config_status:
+                self.backend.sync_always()
 
     def on_schedule_time_changed(self, spin):
         self.update_schedule_info()
@@ -346,6 +363,12 @@ class MainWindow(object):
         if self.UserSettings.config_schedule:
             self.start_schedule()
 
+        self.backend.sync_schedule(
+            int(self.start_hour_adj.get_value()),
+            int(self.start_minute_adj.get_value()),
+            int(self.end_hour_adj.get_value()),
+            int(self.end_minute_adj.get_value()))
+
     def save_schedule_config(self, schedule=None):
         start_str = "{:02d}:{:02d}".format(
             int(self.start_hour_adj.get_value()),
@@ -355,7 +378,7 @@ class MainWindow(object):
             int(self.end_minute_adj.get_value()))
         self.UserSettings.writeConfig(
             self.UserSettings.config_status, self.UserSettings.config_temp,
-            self.UserSettings.config_autostart,
+            self.UserSettings.config_scrollbar, self.UserSettings.config_trayicon, self.UserSettings.config_autostart,
             schedule=schedule if schedule is not None else self.UserSettings.config_schedule,
             schedule_start=start_str, schedule_end=end_str)
         self.user_settings()
@@ -431,6 +454,10 @@ class MainWindow(object):
         """Apply correct state for now, then set one-shot timer for next transition."""
         self.cancel_schedule_timer()
 
+        # GNOME/Cinnamon handle schedule transitions natively, so no app timer.
+        if self.backend.has_native_schedule():
+            return
+
         # Apply immediately
         should_be_on = self.is_in_schedule_range()
         if should_be_on != self.UserSettings.config_status:
@@ -469,15 +496,16 @@ class MainWindow(object):
 
     def on_menu_quit_app(self, *args):
         self.cancel_schedule_timer()
-        subprocess.run(["redshift", "-x"])
+        self.backend.sync_disconnect()
+        self.backend.reset()
         if self.about_dialog.is_visible():
             self.about_dialog.hide()
         self.main_window.get_application().quit()
 
-    # Set color temp function for ETAP
+    # Set color temp function for non scrollbar buttons
     def set_color_temp(self, temperature):
         if self.UserSettings.config_status:
-            subprocess.run(["redshift", "-P", "-O", "{}".format(temperature)])
+            self.backend.apply(temperature)
 
         if temperature == self.temp_color["low"]:
             self.low_button.get_style_context().add_class("suggested-action")
@@ -499,13 +527,14 @@ class MainWindow(object):
         user_temp = self.UserSettings.config_temp
         if temperature != user_temp:
             self.UserSettings.writeConfig(self.UserSettings.config_status, temperature,
+                                          self.UserSettings.config_scrollbar, self.UserSettings.config_trayicon,
                                           self.UserSettings.config_autostart)
             self.user_settings()
 
-    # Color temperature button clicks for ETAP
+    # Color temperature button clicks for non scrollbar buttons
     def on_temp_button_clicked(self, button):
         if self.UserSettings.config_status:
-            subprocess.run(["redshift", "-P", "-O", "{}".format(self.temp_color[button.name])])
+            self.backend.apply(self.temp_color[button.name])
 
         for row_button in self.ui_temp_box:
             row_button.get_style_context().remove_class("suggested-action")
@@ -514,23 +543,25 @@ class MainWindow(object):
         user_temp = self.UserSettings.config_temp
         if self.temp_color[button.name] != user_temp:
             self.UserSettings.writeConfig(self.UserSettings.config_status, self.temp_color[button.name],
+                                          self.UserSettings.config_scrollbar, self.UserSettings.config_trayicon,
                                           self.UserSettings.config_autostart)
             self.user_settings()
 
     def on_ui_temp_adjusment_value_changed(self, adjusment):
-        value = "{:0.0f}".format(adjusment.get_value())
+        value = int(adjusment.get_value())
         print("on_ui_temp_adjusment_value_changed", value)
 
         if self.UserSettings.config_status:
-            subprocess.run(["redshift", "-P", "-O", value])
+            self.backend.apply(value)
 
         user_temp = self.UserSettings.config_temp
         if value != user_temp:
-            self.UserSettings.writeConfig(self.UserSettings.config_status, value, self.UserSettings.config_autostart)
+            self.UserSettings.writeConfig(self.UserSettings.config_status, value, self.UserSettings.config_scrollbar,
+                                          self.UserSettings.config_trayicon, self.UserSettings.config_autostart)
             self.user_settings()
 
     def on_ui_night_switch_state_set(self, switch, state):
-        if self.etap:
+        if not self.UserSettings.config_scrollbar:
             self.ui_temp_box.set_sensitive(state)
         else:
             self.temp_scale.set_sensitive(state)
@@ -538,8 +569,17 @@ class MainWindow(object):
             if "tray" in self.Application.args.keys() and self.make_first_sleep:
                 self.make_first_sleep = False
                 time.sleep(5)
-            subprocess.run(["redshift", "-P", "-O", "{:0.0f}".format(self.UserSettings.config_temp)])
-            if self.etap:
+            if not self.schedule_init:
+                if self.UserSettings.config_schedule:
+                    self.backend.sync_schedule(
+                        int(self.start_hour_adj.get_value()),
+                        int(self.start_minute_adj.get_value()),
+                        int(self.end_hour_adj.get_value()),
+                        int(self.end_minute_adj.get_value()))
+                else:
+                    self.backend.sync_always()
+            self.backend.apply(self.UserSettings.config_temp)
+            if not self.UserSettings.config_scrollbar:
                 if self.UserSettings.config_temp == self.temp_color["low"]:
                     self.low_button.get_style_context().add_class("suggested-action")
                     self.medium_button.get_style_context().remove_class("suggested-action")
@@ -558,16 +598,19 @@ class MainWindow(object):
                     self.high_button.get_style_context().remove_class("suggested-action")
             else:
                 self.temp_adjusment.set_value(self.UserSettings.config_temp)
-            self.item_action.set_label(_("Disable"))
-            self.indicator.set_icon(self.icon_active)
+            if self.UserSettings.config_trayicon:
+                self.item_action.set_label(_("Disable"))
+                self.indicator.set_icon(self.icon_active)
         else:
-            subprocess.run(["redshift", "-x"])
-            self.item_action.set_label(_("Enable"))
-            self.indicator.set_icon(self.icon_passive)
+            self.backend.reset()
+            if self.UserSettings.config_trayicon:
+                self.item_action.set_label(_("Enable"))
+                self.indicator.set_icon(self.icon_passive)
 
         user_status = self.UserSettings.config_status
         if state != user_status:
-            self.UserSettings.writeConfig(state, self.UserSettings.config_temp, self.UserSettings.config_autostart)
+            self.UserSettings.writeConfig(state, self.UserSettings.config_temp, self.UserSettings.config_scrollbar,
+                                          self.UserSettings.config_trayicon, self.UserSettings.config_autostart)
             self.user_settings()
 
     def on_ui_autostart_switch_state_set(self, switch, state):
@@ -575,7 +618,8 @@ class MainWindow(object):
 
         user_autostart = self.UserSettings.config_autostart
         if state != user_autostart:
-            self.UserSettings.writeConfig(self.UserSettings.config_status, self.UserSettings.config_temp, state)
+            self.UserSettings.writeConfig(self.UserSettings.config_status, self.UserSettings.config_temp,
+                                          self.UserSettings.config_scrollbar, self.UserSettings.config_trayicon, state)
             self.user_settings()
 
     def on_ui_about_button_clicked(self, button):
@@ -584,12 +628,14 @@ class MainWindow(object):
 
     def on_ui_main_window_delete_event(self, widget, event):
         self.main_window.hide()
-        self.item_sh_app.set_label(_("Show App"))
+        if self.UserSettings.config_trayicon:
+            self.item_sh_app.set_label(_("Show App"))
         return True
 
     def on_ui_main_window_destroy(self, widget, event):
         self.cancel_schedule_timer()
-        subprocess.run(["redshift", "-x"])
+        self.backend.sync_disconnect()
+        self.backend.reset()
         if self.about_dialog.is_visible():
             self.about_dialog.hide()
         self.main_window.get_application().quit()

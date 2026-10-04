@@ -1,3 +1,24 @@
+mx-night-light (0.7.0+mx25) unstable; urgency=medium
+
+  * Add cinnamon support - Generalize gnome backend to work with cinnamon's color schema - Handles trnasitions natively - #PARDUS-1793
+  * Fix schema bug for cinnamon - #PARDUS-1793
+  * Make cinnamon schedule time sync bidirectional - #PARDUS-1793
+  * Fix cinnamon's schedule bug for pardus-night-light - #PARDUS-1793
+  * Fix schedule staying active - #PARDUS-1793
+  * Sync cinnamon schedule mode with app timer - #PARDUS-1793
+  * Add scroll and tray icon confs
+  * Add color backend for Wayland and multi desktop support - # PARDUS-1440
+  * Edit Readme -  # PARDUS-1440
+  * Update pkg for color backend support - # PARDUS-1440
+  * Edit README - #PARDUS-1458
+  * Add bidirectional Gnome night light sync - #PARDUS-1458
+  * Remove unnecessary gio guards - #PARDUS-1458
+
+  [ TheBSODFan ]
+  * New Version and rebuild for MX25
+  
+ -- TheBSODFan <bsodandwsod501@gmail.com>  Sat, 19 Sep 2026 00:00:00 +0300
+
 mx-night-light (0.6.0+mx25) unstable; urgency=medium
 
   [ Emel Öztürk ]
